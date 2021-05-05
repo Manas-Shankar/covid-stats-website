@@ -2,7 +2,7 @@ import Head from 'next/head'
 import React, {useEffect } from 'react';
 import useFetch from 'use-http';
 import millify from 'millify';
-import PopUp from './popUp';
+import PopUp from '../popUp';
 import style from '../components/styles.module.css';
 import moment from "moment";
 
