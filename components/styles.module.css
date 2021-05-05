@@ -1,0 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Cutive+Mono&family=Montserrat:wght@200;400;800&family=Roboto+Mono:wght@400;700&display=swap');
+
+.container {
+    min-height: 100vh;
+    color: white;
+    padding: 0 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+
+  .title {
+    margin: 0;
+    line-height: 1.15;
+    font-size: 4rem;
+    width:80%;
+  }
+
+  .title,
+  .description {
+    text-align: center;
+  }
+
+  .description {
+    line-height: 1.5;
+    font-size: 1.5rem;
+    font-family: 'Roboto Mono', monospace; 
+    width:85%;
+    margin-bottom:0.5rem;
+  }
+
+  .lastUpdated{
+    text-decoration: underline;
+    font-weight:bold;
+    cursor:pointer;
+  }
+
+  .statButtons{
+    /* border:1px solid black; */
+    padding:1px;
+    width:50%;
+    text-align: center;
+  }
+
+  .regionButton{
+    all:unset;
+    font-family: 'Roboto Mono', monospace; 
+    font-weight: bold;
+    padding:10px;
+    border-radius:5px;
+    margin:10px;
+    margin-right:20px;
+    border:2px solid black;
+  }
+  .regionButton1{
+    all:unset;
+    font-family: 'Roboto Mono', monospace; 
+    padding:10px;
+    border:2px solid black;
+    font-weight: bold;
+    border-radius:5px;
+    margin:10px;
+    box-shadow:none;
+    cursor:pointer;
+  }
+
+  .regionButton:hover{
+    background-color: #7ba7b7;
+    border:2px solid black;
+    color: black;
+  }
+
+  .regionButton1:hover{
+    background-color: #7ba7b7;
+    border:2px solid black;
+    color: black;
+  }
+
+  .mainStats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 1500px;
+    margin-top: 1rem;
+  }
+
+  .card {
+    margin: 1rem;
+    flex-basis: 45%;
+    padding: 1.5rem;
+    text-align: left;
+    color: inherit;
+    text-decoration: none;
+    text-align:center;
+    /* border: 1px solid #bfbfbf; */
+    border-radius: 10px;
+  }
+
+  .card:hover
+  {
+    background-color:  #487484;
+    color:#f2f2f2;
+    /* border : 2px solid black; */
+  }
+
+  .card h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+  }
+ 
+
+  .worldSection{
+    background-color: #7ba7b7;
+    /* border : 2px solid black; */
+    color:black;
+  }
+
+ 
+  .title_stats{
+    font-size: 35px;
+  }
+  .worldDetails{
+    font-family: 'Roboto Mono', monospace;
+  }
+
+  .indiaSection{
+    padding-bottom:71px;
+    background-color: #7ba7b7;
+    /* border : 2px solid black; */
+    color:black;
+  }
+
+  .indiaDetails{
+    font-family: 'Roboto Mono', monospace;
+  }
+
+  .regionTable{
+    /* border:1px solid black; */
+    width:90%;
+    text-align: center;
+  }
+
+  .styledTable {
+    border-collapse: collapse;
+    border:1px solid black;
+    
+    font-family: 'Montserrat', sans-serif;
+    width:100%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    font-weight:bold;
+
+}
+
+.styledTable thead th {
+  background-color: #194d33;
+  color: #ffffff;
+  font-size:1.5rem;
+  text-align: center;
+  padding:12px 15px;
+  border:1px solid black;
+}
+
+.styledTable tbody td{
+  padding: 10px 0px;
+  font-size:1.1rem;
+  border:1px solid black;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.styledTable tbody tr:nth-of-type(even) {
+  background-color: #38ad73;
+  color:black;
+}
+
+.styledTable tbody tr:nth-of-type(odd) {
+  background-color: #78d3a6;
+  color:black;
+}
+
+.styledTable tbody tr:last-of-type {
+  border-bottom: 2px solid #38ad73;
+}
+
+.styledTable tbody tr:hover{
+  background-color: #0c2719;
+  cursor: pointer;
+  color:white;
+  
+}
+
+.styledTable tbody td:hover{
+  background-color: #0c2719;
+  border: 2px solid white;
+}
+

@@ -1,209 +1,237 @@
 import Head from 'next/head'
+import React, {useEffect } from 'react';
+import useFetch from 'use-http';
+import millify from 'millify';
+import PopUp from './popUp';
+import style from '../components/styles.module.css';
+import moment from "moment";
 
+const MillifyOptions = {
+  precision:3,
+  space:true
+};
+
+let url = "https://covid-server-app.herokuapp.com/data";
 export default function Home() {
-  return (
-    <div className="container">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+  const [serverData,changeServerData] = React.useState([]);
+  const [regionData,changeRegionData] = React.useState([]);
+  const [lastUpdatedAt,changeLastUpdatedAt] = React.useState("");
+  const { get, post, response, loading, error } = useFetch(url)
+  const [show_detailed_view,changeView] = React.useState(false);
 
-      <main>
-        <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+  async function loadStats() {
+    const data = await get('')
+    console.log(data)
+    if (response.ok) 
+    { 
+      changeServerData(data)
+      changeRegionData(data[2])
+      let date = moment(data[3]).format("MMMM d, YYYY");
+      console.log(date)
+      changeLastUpdatedAt(data[3])
+    }
+  }
 
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
+  const handleClick = ()=>{
+    changeView(true);
+  }
 
-        <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+  useEffect(() => {loadStats()}, [])
+  if (serverData !== null)
+  {
+    return (
+      <div className={style.container}>
+     
+        <Head>
+          <title>COVID-19 statistics</title>
+        </Head>
+  
+        <main>
 
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+        {
+       show_detailed_view===true ? 
+       (<PopUp 
+       toggle={changeView}
+       regionData = {regionData.map(item=>{
+         return item.region
+       })}                                                                 
+        />) : 
+       (null)
+      }
+          <h1 className={style.title}>
+            COVID-19 statistics for India and the World
+          </h1>
+         
+          <p className={style.description}>
+            This website was created to view statistics of the COVID-19 pandemic 
+            in India and its states, as well as total statistics for the World.
+            <br/>
+            Statistics were last updated on <span className={style.lastUpdated}>{lastUpdatedAt}</span>.
+          </p>
+          <div className={style.statButtons}>
+          <button className={style.regionButton}><a  href="#region-statistics">REGION WISE STATISTICS</a> </button>
+          <button className={style.regionButton1} onClick={()=>{handleClick()}}>DAILY NOTIFICATIONS</button>
+          </div>
+          <div className={style.mainStats}>
+            <div className={`${style.card} ${style.worldSection}`}>
+              {serverData.map((item,index)=>{
+                if(index==0)
+                {
+                  return (
+                    <div className={style.worldStats}>
+                    <h1 className={style.title_stats}>WORLD STATISTICS</h1>
+                    <div className={style.worldDetails}>
+                      <h3>Active cases: {millify(item.activeCases,MillifyOptions)}</h3>
+                      <h3>New cases: {millify(item.newCases,MillifyOptions)}</h3>
+                      <h3>New deaths: {millify(item.newDeaths,MillifyOptions)}</h3>
+                      <h3>Serious/Critical cases : {millify(item.seriousCritical,MillifyOptions)}</h3>
+                      <h3>Cases per million : {millify(item.casesPerMil,MillifyOptions)}</h3>
+                      <h3>Deaths per million : {millify(item.deathsPerMil,MillifyOptions)}</h3>
+                      <h3>Total Worldwide Cases : {millify(item.totalCases,MillifyOptions)}</h3>
+                      <h3>Total Worldwide deaths : {millify(item.totalDeaths,MillifyOptions)}</h3>
+                      <h3>Total WorldWide Recoveries : {millify(item.totalRecovered,MillifyOptions)}</h3>
+                    </div>
+                    </div>
+                  )  
+                }
+              })}
+            </div>
+            <div className={`${style.card} ${style.indiaSection}`}>
+              {
+                serverData.map((item,index)=>{
+                  if(index==1)
+                  {
+                    {/* console.log(item) */}
+                    return (
+                    <div className={style.indiaStats}>
+                    <h1 className={style.title_stats}>INDIA STATISTICS</h1>
+                    <div className={style.indiaDetails}>
+                        <h3>Active cases: {millify(item.activeCases,MillifyOptions)}</h3>
+                        <h3>New Active cases : {millify(item.activeCasesNew,MillifyOptions)}</h3>
+                        <h3>Deaths : {millify(item.deaths,MillifyOptions)}</h3>
+                        <h3>New Deaths : {millify(item.deathsNew,MillifyOptions)}</h3>
+                        <h3>Recovered cases : {millify(item.recovered,MillifyOptions)}</h3>
+                        <h3>New Recovered cases : {millify(item.recoveredNew,MillifyOptions)}</h3>
+                        <h3>Previous day tests : {millify(item.previousDayTests,MillifyOptions)}</h3>
+                        <h3>Total cases : {millify(item.totalCases,MillifyOptions)}</h3>
+                      </div>
+                    </div>
+                  )  
+                  }
+                })
+              }
+            </div>
+            
+          </div>
+          <div className={style.regionTable} id="region-statistics">
+          <h1>REGION WISE STATISTICS</h1>
+          <table className={style.styledTable}>
+            <thead >
+                <th >REGION</th>
+                <th >TOTAL CASES</th>
+                <th>NEW CASES</th>
+                <th>TOTAL DEATHS</th>
+                <th>NEW DEATHS</th>
+                <th>TOTAL RECOVERIES</th>
+                <th>NEW RECOVERIES</th>
+            </thead>
+            <tbody>
+          {regionData.map((region,index)=>{
+                {/* console.log(region) */}
+                return (
+                  <tr>
+                     <td>{region.region}</td>
+                     <td>{millify(region.totalInfected,MillifyOptions)}</td> 
+                     <td>{millify(region.newInfected,MillifyOptions)}</td>
+                    <td>{millify(region.deceased,MillifyOptions)}</td>
+                     <td>{region.newDeceased}</td>
+                     <td>{millify(region.recovered,MillifyOptions)}</td>
+                     <td>{millify(region.newRecovered,MillifyOptions)}</td>
+                  </tr>
+                )
+              })}
+              </tbody>
+              </table>
+          </div>
+        </main>
+  
+        <footer>
+              Copyright 2021&nbsp;<a href="https://github.com/Manas-Shankar"> Manas Shankar</a>
+        </footer>
+  
+        
+  
+        <style jsx global>{`
+                    html,
+                    body {
+                      padding: 0;
+                      background-color: #18414e;
+                      margin: 0;
+                      font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+                        Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
+                        sans-serif;
+                        scroll-behavior: smooth;
+                    
+                                  }
+                                
+                                  * {
+                                    box-sizing: border-box;
+                                  }
+                                  footer {
+                            width: 100%;
+                            height: 100px;
+                            border-top: 1px solid #bfbfbf;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                          }
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
+                          main {
+                              padding: 5rem 0 2rem 0;
+                              flex: 1;
+                              position:relative;
+                              display: flex;
+                              flex-direction: column;
+                              justify-content: center;
+                              align-items: center;
+                            }
+                        
+                          footer{
+                            font-family: 'Roboto Mono', monospace;
+                          }
+                         
+                        
+                          footer a {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            text-decoration:underline;
+                          }
 
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+                          footer a:hover {
+                            font-weight:bold;
+                            text-decoration:underline;
+                          }
+                        
+                          a {
+                            color: inherit;
+                            text-decoration: none;
+                          }
+                        
 
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
-        </a>
-      </footer>
-
-      <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer img {
-          margin-left: 0.5rem;
-        }
-
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-
-        .title a {
-          color: #0070f3;
-          text-decoration: none;
-        }
-
-        .title a:hover,
-        .title a:focus,
-        .title a:active {
-          text-decoration: underline;
-        }
-
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 4rem;
-        }
-
-        .title,
-        .description {
-          text-align: center;
-        }
-
-        .description {
-          line-height: 1.5;
-          font-size: 1.5rem;
-        }
-
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
-        }
-
-        .card {
-          margin: 1rem;
-          flex-basis: 45%;
-          padding: 1.5rem;
-          text-align: left;
-          color: inherit;
-          text-decoration: none;
-          border: 1px solid #eaeaea;
-          border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
-        }
-
-        .card:hover,
-        .card:focus,
-        .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-        }
-
-        .card h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1.5rem;
-        }
-
-        .card p {
-          margin: 0;
-          font-size: 1.25rem;
-          line-height: 1.5;
-        }
-
-        .logo {
-          height: 1em;
-        }
-
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
-    </div>
-  )
+                            
+                            `}</style>
+                </div>
+      
+    )
+  }
+  else{
+    return (<div>
+      content loading ...
+    </div>)
+  }
+  
 }
+
+
+
